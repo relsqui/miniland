@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import time
+import sys
 
 class Clock(object):
     ticks_hour = 100
@@ -10,14 +11,14 @@ class Clock(object):
 
     def __init__(self, seed=None, speed=None):
         if seed is None:
-            seed = time.time()
+            seed = int(time.time())
         self.seed = seed
         if speed is None:
             speed = 1
         self.speed = speed
 
     def update(self):
-        self.tick = int((time.time() - self.seed) * self.speed)
+        self.tick = (int(time.time()) - self.seed) * self.speed
         self.year = self.tick / self.ticks_year
         remaining = self.tick - (self.year * self.ticks_year)
         self.month = remaining / self.ticks_month
@@ -32,7 +33,24 @@ class Clock(object):
         return time_string.format(y=self.year, m=self.month, d=self.day, h=self.hour, n=self.minute)
 
 
-clock = Clock(speed=367)
+try:
+    with open("savefile", "r") as f:
+        try:
+            seed = int(f.read())
+            print("Welcome back!")
+        except ValueError:
+            print("Couldn't parse savefile. Quitting, just to be safe.")
+            sys.exit(1)
+except IOError as e:
+    if e.errno == 2:
+        # File doesn't exist.
+        print("Welcome!")
+        seed = None
+    else:
+        print("Couldn't read savefile ('{e}'). Quitting, just to be safe.".format(e=e.strerror))
+        sys.exit(2)
+
+clock = Clock(seed=seed)
 clock.update()
 while True:
     line = raw_input("> ")
@@ -40,8 +58,12 @@ while True:
     if line == "quit":
         break
     elif line == "tick":
-        print clock.tick
+        print(clock.tick)
     elif line == "time":
-        print clock.time()
+        print(clock.time())
     else:
-        print "OK ({})".format(line)
+        print("OK ({})".format(line))
+
+with open("savefile", "w") as f:
+    f.write(str(clock.seed))
+    print("Saved. Goodbye!")
