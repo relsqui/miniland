@@ -1,3 +1,13 @@
+TECHNICAL
+save where you left off, not just original seed
+add savefile name to settings
+split into files
+clean up load failures (use exceptions)
+read savefile name from command line
+change savefile name from in game
+
+FEATURES
 name the days and months
 allow the player to name specific years
-add player name
+randomize greetings
+weather
