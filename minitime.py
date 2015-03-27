@@ -18,46 +18,63 @@ class MiniTime(object):
         self.set_ticks(ticks)
         self.ticks = ticks
 
+    def __eq__(self, other):
+        return self.ticks == other.ticks
+
+    def __add__(self, other):
+        return MiniTime(int(self) + int(other))
+
+    def __sub__(self, other):
+        return MiniTime(int(self) - int(other))
+
+    def __int__(self):
+        return self.ticks
+
     def __str__(self):
         keys = ["year", "month", "day", "hour", "minute"]
-        keys = [k for k in keys if self.get_dict()[k+"s"]]
+        keys = [k for k in keys if self[k+"s"]]
         strings = dict()
         for key in keys:
-            count = self.get_dict()[key+"s"]
+            count = self[key+"s"]
             denomination = key + string_utils.s(count)
             strings[key] = "{c} {d}".format(c=count, d=denomination)
         if keys == ["hour", "minute"]:
-            return "{h}.{n}".format(h=self.get_dict()["hours"], n=self.get_dict()["minutes"])
+            return "{h}.{n:02}".format(h=self.hours, n=self.minutes)
         return string_utils.comma_and([strings[k] for k in keys])
 
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
     def get_dict(self):
-        # this would be __dict__ but that means something else
         return {"years":self.years, "months":self.months, "days":self.days, 
                 "hours":self.hours, "minutes":self.minutes}
 
     def set_ticks(self, ticks):
         self.ticks = ticks
         self.years = 0
-        while ticks > 403200:
+        while ticks >= 403200:
             ticks -= 403200
             self.years += 1
         self.months = 0
-        while ticks > 33600:
+        while ticks >= 33600:
             ticks -= 33600
             self.months += 1
         self.days = 0
-        while ticks > 1200:
+        while ticks >= 1200:
             ticks -= 1200
             self.days += 1
         self.day_of_year = self.days + (28 * self.months)
         self.hours = 0
-        while ticks > 100:
+        while ticks >= 100:
             ticks -= 100
             self.hours += 1
         self.minutes = ticks
 
     def time(self):
         return MiniTime(self.hours * 100 + self.minutes)
+
+    def date(self):
+        return self - self.time()
 
 
 class Clock(object):
@@ -86,13 +103,32 @@ class Clock(object):
         self.sunset = MiniTime(800 - sun_offset)
         return MiniTime(diff_ticks)
 
+    def almanac(self):
+        parameters = dict()
+        string = "Sunrise {rise_tense} at {rise}. Sunset {set_tense} at {set}."
+        now = self.t.time()
+        print repr(now)
+        print("now = " + str(now))
+        print repr(self.sunrise)
+        print("sunrise = " + str(self.sunrise))
+        print repr(self.sunset)
+        print("sunset = " + str(self.sunset))
+        if self.sunrise < now:
+            parameters["rise_tense"] = "was"
+        else:
+            parameters["rise_tense"] = "is"
+        if self.sunset < now:
+            parameters["set_tense"] = "was"
+        else:
+            parameters["set_tense"] = "is"
+        parameters["rise"] = str(self.sunrise)
+        parameters["set"] = str(self.sunset)
+        return string.format(**parameters)
+
     def time(self):
         t = self.t
-        time_string = "It is {h}.{n:02} on day {d} of month {m}, year {y}."
-        times = {"h":t.hours, "n":t.minutes, "d":t.days, "m":t.months, "y":t.years}
+        time_string = "It is {t} on day {d} of month {m}, year {y}."
+        times = {"t":str(t.time()), "d":t.days, "m":t.months, "y":t.years}
         time_string = time_string.format(**times)
-        sun_string = "Sunrise is at {rise}. Sunset is at {set}."
-        suns = {"rise":str(self.sunrise.time()), "set":str(self.sunset.time())}
-        sun_string = sun_string.format(**suns)
         speed_string = "Current clock speed is {speed}x.".format(speed=self.speed)
-        return "\n".join([time_string, sun_string, speed_string])
+        return "\n".join([time_string, self.almanac(), speed_string])
