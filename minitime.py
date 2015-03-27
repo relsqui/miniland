@@ -2,10 +2,12 @@
 
 import time
 import math
+import functools
 
 import string_utils
 
 
+@functools.total_ordering
 class MiniTime(object):
     """
     There are 100 ticks/minutes in an hour,
@@ -20,6 +22,9 @@ class MiniTime(object):
 
     def __eq__(self, other):
         return self.ticks == other.ticks
+
+    def __lt__(self, other):
+        return self.ticks < other.ticks
 
     def __add__(self, other):
         return MiniTime(int(self) + int(other))
@@ -107,12 +112,6 @@ class Clock(object):
         parameters = dict()
         string = "Sunrise {rise_tense} at {rise}. Sunset {set_tense} at {set}."
         now = self.t.time()
-        print repr(now)
-        print("now = " + str(now))
-        print repr(self.sunrise)
-        print("sunrise = " + str(self.sunrise))
-        print repr(self.sunset)
-        print("sunset = " + str(self.sunset))
         if self.sunrise < now:
             parameters["rise_tense"] = "was"
         else:
