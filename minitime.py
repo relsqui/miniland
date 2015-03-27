@@ -3,6 +3,8 @@
 import time
 import math
 
+import string_utils
+
 
 class MiniTime(object):
     """
@@ -17,8 +19,21 @@ class MiniTime(object):
         self.ticks = ticks
 
     def __str__(self):
-        time_string = "{y} years, {m} months, {d} days, and {h}.{n:02} hours"
-        return time_string.format(y=self.years, m=self.months, d=self.days, h=self.hours, n=self.minutes)
+        keys = ["year", "month", "day", "hour", "minute"]
+        keys = [k for k in keys if self.get_dict()[k+"s"]]
+        strings = dict()
+        for key in keys:
+            count = self.get_dict()[key+"s"]
+            denomination = key + string_utils.s(count)
+            strings[key] = "{c} {d}".format(c=count, d=denomination)
+        if keys == ["hour", "minute"]:
+            return "{h}.{n}".format(h=self.get_dict()["hours"], n=self.get_dict()["minutes"])
+        return string_utils.comma_and([strings[k] for k in keys])
+
+    def get_dict(self):
+        # this would be __dict__ but that means something else
+        return {"years":self.years, "months":self.months, "days":self.days, 
+                "hours":self.hours, "minutes":self.minutes}
 
     def set_ticks(self, ticks):
         self.ticks = ticks
@@ -42,7 +57,7 @@ class MiniTime(object):
         self.minutes = ticks
 
     def time(self):
-        return "{h}.{n:02}".format(h=self.hours, n=self.minutes)
+        return MiniTime(self.hours * 100 + self.minutes)
 
 
 class Clock(object):
@@ -50,6 +65,9 @@ class Clock(object):
         if seed is None:
             seed = int(time.time())
         self.seed = seed
+        self.last_tick = 0
+        self.last_timestamp = seed
+        self.speed = 1
 
     def __getstate__(self):
         odict = self.__dict__.copy()
@@ -74,7 +92,7 @@ class Clock(object):
         times = {"h":t.hours, "n":t.minutes, "d":t.days, "m":t.months, "y":t.years}
         time_string = time_string.format(**times)
         sun_string = "Sunrise is at {rise}. Sunset is at {set}."
-        suns = {"rise":self.sunrise.time(), "set":self.sunset.time()}
+        suns = {"rise":str(self.sunrise.time()), "set":str(self.sunset.time())}
         sun_string = sun_string.format(**suns)
         speed_string = "Current clock speed is {speed}x.".format(speed=self.speed)
         return "\n".join([time_string, sun_string, speed_string])
