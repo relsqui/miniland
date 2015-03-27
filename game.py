@@ -30,6 +30,12 @@ class Game(object):
             elif line == "save":
                 self.save()
                 print("OK. Saved.")
+            elif line.startswith("speed"):
+                if " " in line:
+                    self.clock.speed = int(line.split(None, 1)[1])
+                else:
+                    self.clock.speed = 1
+                print("OK. Going at {s}x speed.".format(s=self.clock.speed))
             elif line == "tick":
                 print(self.clock.tick)
             elif line == "time":
@@ -41,8 +47,6 @@ class Game(object):
 
     def save(self):
         with open("savefile", "w") as f:
-            self.last_tick = self.clock.tick
-            self.last_timestamp = int(time.time())
             pickle.dump(self, f, 0)
 
 
@@ -52,9 +56,7 @@ def load(filename=None):
     try:
         with open(filename, "r") as f:
             game = pickle.load(f)
-            last_tick = game.last_tick
-            game.clock.update()
-            diff_ticks = minitime.MiniTime(game.clock.tick - last_tick)
+            diff_ticks = game.clock.update()
             print("Welcome back! I haven't seen you in {t}.".format(t=str(diff_ticks)))
             return game
     except IOError as e:

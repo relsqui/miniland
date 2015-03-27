@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import time
+import math
 
 
 class MiniTime(object):
@@ -20,6 +21,7 @@ class MiniTime(object):
         return time_string.format(y=self.years, m=self.months, d=self.days, h=self.hours, n=self.minutes)
 
     def set_ticks(self, ticks):
+        self.ticks = ticks
         self.years = 0
         while ticks > 403200:
             ticks -= 403200
@@ -32,26 +34,47 @@ class MiniTime(object):
         while ticks > 1200:
             ticks -= 1200
             self.days += 1
+        self.day_of_year = self.days + (28 * self.months)
         self.hours = 0
         while ticks > 100:
             ticks -= 100
             self.hours += 1
         self.minutes = ticks
 
+    def time(self):
+        return "{h}.{n:02}".format(h=self.hours, n=self.minutes)
+
 
 class Clock(object):
-    def __init__(self, seed=None, speed=None):
+    def __init__(self, seed=None):
         if seed is None:
             seed = int(time.time())
         self.seed = seed
-        if speed is None:
-            speed = 1
-        self.speed = speed
+
+    def __getstate__(self):
+        odict = self.__dict__.copy()
+        odict["speed"] = 1
+        return odict
 
     def update(self):
-        self.tick = (int(time.time()) - self.seed) * self.speed
+        self.tick = self.last_tick
+        self.tick += (int(time.time()) - self.last_timestamp) * self.speed
+        diff_ticks = self.tick - self.last_tick
+        self.last_tick = self.tick
+        self.last_timestamp = int(time.time())
+        self.t = MiniTime(self.tick)
+        sun_offset = int(math.cos(2*math.pi*self.t.day_of_year/336)*100)+100
+        self.sunrise = MiniTime(sun_offset)
+        self.sunset = MiniTime(800 - sun_offset)
+        return MiniTime(diff_ticks)
 
     def time(self):
-        t = MiniTime(self.tick)
+        t = self.t
         time_string = "It is {h}.{n:02} on day {d} of month {m}, year {y}."
-        return time_string.format(y=t.years, m=t.months+1, d=t.days+1, h=t.hours, n=t.minutes)
+        times = {"h":t.hours, "n":t.minutes, "d":t.days, "m":t.months, "y":t.years}
+        time_string = time_string.format(**times)
+        sun_string = "Sunrise is at {rise}. Sunset is at {set}."
+        suns = {"rise":self.sunrise.time(), "set":self.sunset.time()}
+        sun_string = sun_string.format(**suns)
+        speed_string = "Current clock speed is {speed}x.".format(speed=self.speed)
+        return "\n".join([time_string, sun_string, speed_string])
