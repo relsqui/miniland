@@ -1,0 +1,27 @@
+A - cool, clear, light wind - lasts one to three days
+B - heavy precipitation, light wind - lasts one to three days
+C - light precipitation, windy - lasts one or two days
+D - light precipitation, light wind - lasts one or two days
+E - heavy precipitation, heavy wind - lasts about a day
+F - warm, clear, windy - lasts one to three days
+G - cold, clear, light wind - lasts one day to a week
+H - cold, windy - lasts one or two days
+I - warm, clear, light wind - lasts one day to a week
+J - stormy - lasts one to three days
+K - mild, calm - lasts one day to a few weeks
+
+A -> B (very likely), D (unlikely), K (very unlikely)
+B -> G (very likely), K (unlikely), E (very unlikely)
+C -> E (very likely), H (likely), F (very unlikely)
+D -> F (very likely), C (likely), K (unlikely)
+E -> G (very likely), H (unlikely)
+F -> H (very likely), I (unlikely)
+G -> K (very likely), J (very unlikely)
+H -> J (very likely), I (unlikely), G (very unlikely)
+I -> K (very likely), J (very unlikely)
+J -> K (very likely), I (unlikely), G (very unlikely)
+K -> A, G, or I (equal probabilities)
+
+
+How do seasons affect this? Lower all temperatures, or change frequencies?
+Or change frequency of the entire system occurring?

@@ -1,17 +1,19 @@
-TECHNICAL
+FIXES
 make save function a little more robust
 clean up load failures (use exceptions)
+override setters for MiniTime to update appropriately
+disconnect output timing from input (move to async event-driven)
 
 FEATURES
 add help
-override setters for MiniTime to update appropriately
 allow the player to name specific years
 weather
 change savefile location
     add as a game attribute
     read from command line
     change from in game (arg to save command?)
+plant growth
 
-CREATIVE
+FUN
 name the days and months
 randomize greetings
