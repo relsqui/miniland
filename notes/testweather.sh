@@ -1,7 +1,7 @@
 #!/bin/bash
 
 a() {
-    DAYS=$(expr $RANDOM % 3 + 1 + 1)
+    DAYS=$(expr $RANDOM % 3 + 1)
     REMAINING=$(expr $1 - $DAYS)
     echo "cool and clear for $DAYS days"
     if [ $REMAINING -lt 0 ]; then exit 0; fi
@@ -101,7 +101,7 @@ f() {
 }
 
 g() {
-    DAYS=$(expr $RANDOM % 7 + 1)
+    DAYS=$(expr $RANDOM % 3 + 1)
     REMAINING=$(expr $1 - $DAYS)
     echo "cold and clear for $DAYS days"
     if [ $REMAINING -lt 0 ]; then exit 0; fi
@@ -133,7 +133,7 @@ h() {
 }
 
 i() {
-    DAYS=$(expr $RANDOM % 7 + 1)
+    DAYS=$(expr $RANDOM % 3 + 1)
     REMAINING=$(expr $1 - $DAYS)
     echo "warm and clear for $DAYS days"
     if [ $REMAINING -lt 0 ]; then exit 0; fi
@@ -165,7 +165,7 @@ j() {
 }
 
 k() {
-    DAYS=$(expr $RANDOM % 7 + 1)
+    DAYS=$(expr $RANDOM % 3 + 1)
     REMAINING=$(expr $1 - $DAYS)
     echo "mild and calm for $DAYS days"
     if [ $REMAINING -lt 0 ]; then exit 0; fi

@@ -14,3 +14,34 @@ warm and clear for 6 days
 mild and calm for 4 days
 warm and clear for 1 days
 mild and calm for 5 days
+
+relsqui@raven:~/miniland/notes$ ./testweather.sh 
+mild and calm for 2 days
+cool and clear for 1 days
+a light rain begins to fall
+light rain for 2 days
+the wind picks up
+windy with light rain for 1 days
+the rain stops, and the air grows cold
+cold and windy for 2 days
+dark thunderheads roll in
+thunderstorms for 3 days
+the storm dies down
+cold and clear for 3 days
+dark thunderheads roll in
+thunderstorms for 1 days
+the storm passes
+mild and calm for 2 days
+cool and clear for 2 days
+clouds roll in and it starts to rain
+heavy rain for 2 days
+the skies clear
+cold and clear for 3 days
+mild and calm for 1 days
+cool and clear for 1 days
+clouds roll in and it starts to rain
+heavy rain for 1 days
+the skies clear
+cold and clear for 1 days
+mild and calm for 2 days
+
